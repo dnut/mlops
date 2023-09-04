@@ -6,6 +6,10 @@ python_requires = ">=3.11"
 internal = ["common"]
 external = { flask = ">=2.3.3,<3" }
 
+[_.client]
+internal = ["common"]
+external = { requests = ">=2.31.0,<3" }
+
 [_.common]
 
 [_.onnx_app]

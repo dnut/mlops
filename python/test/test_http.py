@@ -2,13 +2,10 @@ from dataclasses import dataclass, asdict
 import requests
 
 from animal_classifier.common import AnimalClass, AnimalDescription
+from animal_classifier.client import AnimalClassifierClient
 
-if __name__ == '__main__':
-
-    def classify(description: AnimalDescription) -> AnimalClass:
-        response = requests.post("http://localhost:5000/classify", json=asdict(description))
-        return AnimalClass(**response.json())
-
+if __name__ == "__main__":
+    classify = AnimalClassifierClient("http://localhost:5000").classify_animal
 
     aardvark = AnimalDescription(1, 0, 0, 1, 0, 0, 1, 1, 1, 1, 0, 0, 4, 0, 0, 1)
     frog = AnimalDescription(0, 0, 1, 0, 0, 1, 1, 1, 1, 1, 1, 0, 4, 0, 0, 0)

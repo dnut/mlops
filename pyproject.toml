@@ -12,11 +12,11 @@ scikit-learn = "^1.3"
 onnxruntime = "^1.15"
 pandas = "^2.1"
 skl2onnx = "^1.15"
+requests = "^2.31.0"
 
 [tool.poetry.group.test.dependencies]
 pytest = "*"
 python-dotenv = "*"
-requests = "*"
 
 # build dependencies for dist.py
 build = "*"
