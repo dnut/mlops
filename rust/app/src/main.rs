@@ -1,11 +1,41 @@
-use std::{collections::HashMap, fs::File};
+use std::{collections::HashMap, fs::File, net::SocketAddr, sync::Arc};
 
+use animal_classification_core::{AnimalClass, AnimalDescription};
 use anyhow::Context;
+use axum::{http::StatusCode, routing::post, Json, Router};
 use ndarray::{Array2, CowArray};
 use ort::{Environment, GraphOptimizationLevel, LoggingLevel, Session, SessionBuilder, Value};
 
-fn main() -> anyhow::Result<()> {
-    todo!()
+#[tokio::main]
+async fn main() -> anyhow::Result<()> {
+    let state = Arc::new((
+        load_session("animal-classes.onnx")?,
+        load_classes("input/class.csv")?,
+    ));
+
+    let app = Router::new().route(
+        "/classify",
+        post(move |Json(description)| {
+            let state = state.clone();
+            async move {
+                classify_animal(&(*state).0, &(*state).1, description)
+                    .map(|class| Json(class.json()))
+                    .map_err(|err| {
+                        (
+                            StatusCode::INTERNAL_SERVER_ERROR,
+                            format!("Something went wrong: {}", err),
+                        )
+                    })
+            }
+        }),
+    );
+
+    axum::Server::bind(&SocketAddr::new("0.0.0.0".parse().unwrap(), 5000))
+        .serve(app.into_make_service())
+        .await
+        .unwrap();
+
+    Ok(())
 }
 
 fn load_session(model_path: &str) -> anyhow::Result<Session> {
@@ -26,11 +56,8 @@ fn classify_animal(
     classes: &HashMap<i64, AnimalClass>,
     description: AnimalDescription,
 ) -> anyhow::Result<AnimalClass> {
-    let description_as_array = CowArray::from(description.to_array().into_dyn());
-    let input = vec![Value::from_array(
-        session.allocator(),
-        &description_as_array,
-    )?];
+    let description_array = CowArray::from(to_array(description).into_dyn());
+    let input = vec![Value::from_array(session.allocator(), &description_array)?];
     let prediction = session.run(input)?;
     let predicted_animal_class_id = prediction[0]
         .try_extract::<i64>()?
@@ -50,11 +77,11 @@ fn load_classes(path: &str) -> anyhow::Result<HashMap<i64, AnimalClass>> {
     let mut reader = csv::Reader::from_reader(file);
     for result in reader.records() {
         let record = result?;
-        let id = str::parse(record.get(0).context("missing class number")?)?;
+        let class_id = str::parse(record.get(0).context("missing class number")?)?;
         classes.insert(
-            id as i64,
+            class_id as i64,
             AnimalClass {
-                id,
+                class_id,
                 name: record.get(2).context("missing class type")?.into(),
             },
         );
@@ -62,65 +89,37 @@ fn load_classes(path: &str) -> anyhow::Result<HashMap<i64, AnimalClass>> {
     Ok(classes)
 }
 
-#[derive(Clone, Copy, Debug)]
-pub struct AnimalDescription {
-    pub hair: u8,
-    pub feathers: u8,
-    pub eggs: u8,
-    pub milk: u8,
-    pub airborne: u8,
-    pub aquatic: u8,
-    pub predator: u8,
-    pub toothed: u8,
-    pub backbone: u8,
-    pub breathes: u8,
-    pub venomous: u8,
-    pub fins: u8,
-    pub legs: u8,
-    pub tail: u8,
-    pub domestic: u8,
-    pub catsize: u8,
-}
-
-impl AnimalDescription {
-    fn to_array(self) -> Array2<i64> {
-        Array2::from_shape_vec(
-            [1, 16],
-            vec![
-                self.hair.into(),
-                self.feathers.into(),
-                self.eggs.into(),
-                self.milk.into(),
-                self.airborne.into(),
-                self.aquatic.into(),
-                self.predator.into(),
-                self.toothed.into(),
-                self.backbone.into(),
-                self.breathes.into(),
-                self.venomous.into(),
-                self.fins.into(),
-                self.legs.into(),
-                self.tail.into(),
-                self.domestic.into(),
-                self.catsize.into(),
-            ],
-        )
-        .unwrap()
-    }
-}
-
-#[derive(Clone, Debug)]
-pub struct AnimalClass {
-    pub id: u8,
-    pub name: String,
+fn to_array(desc: AnimalDescription) -> Array2<i64> {
+    Array2::from_shape_vec(
+        [1, 16],
+        vec![
+            desc.hair.into(),
+            desc.feathers.into(),
+            desc.eggs.into(),
+            desc.milk.into(),
+            desc.airborne.into(),
+            desc.aquatic.into(),
+            desc.predator.into(),
+            desc.toothed.into(),
+            desc.backbone.into(),
+            desc.breathes.into(),
+            desc.venomous.into(),
+            desc.fins.into(),
+            desc.legs.into(),
+            desc.tail.into(),
+            desc.domestic.into(),
+            desc.catsize.into(),
+        ],
+    )
+    .unwrap()
 }
 
 #[test]
 fn load_and_classify() -> anyhow::Result<()> {
     tracing_subscriber::fmt::init();
 
-    let session = load_session("../animal-classes.onnx")?;
-    let classes = load_classes("../input/class.csv")?;
+    let session = load_session("../../animal-classes.onnx")?;
+    let classes = load_classes("../../input/class.csv")?;
 
     let aardvark = AnimalDescription {
         hair: 1,

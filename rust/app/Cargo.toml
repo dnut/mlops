@@ -1,0 +1,17 @@
+[package]
+name = "animal-classification-app"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+anyhow = "1.0.75"
+axum = "0.6.20"
+csv = "1.2.2"
+ndarray = "0.15.6"
+ort = "1.15.2"
+tokio = { version = "1.32.0", features = ["full"] }
+tracing-subscriber = { version = "0.3.17", features = ["env-filter", "fmt"] }
+
+[dependencies.animal-classification-core]
+workspace = true
+default-features = false

@@ -1,22 +1,19 @@
-- two stage docker image
-- quart with thread pool for prediction
-- client library used by server and client
-- go and rust server and client
-- pickle model and test pickled against onnx
-- get onnx to work with multiple named inputs
+# in progress
+- rust env vars
+- rust Dockerfile
+
+# backlog
 - kubernetes pod
-- monitoring and logging to service
+- go server
+- go client
+- configurable listening port number
+- python: investigate multi-stage docker images in
+- python: consider/test quart with thread pool for prediction - yes it is cpu bound, but we can improve GIL usage, also this actually could go to the gpu instead.
+- pickle model and test pickled against onnx
+- get onnx to work with multiple named inputs, requires training with names
+- monitoring and logging to central services
 - scale in kubernetes based on load from monitoring service
-- setup.py for server and client library and deploy wheels
-- type hinting and mypy
-- any data types shared between trainer and service
+- python: type hinting and lint with mypy or comparable
 - automate environment setup with k8s and everything, maybe github workflow?
-- error handling
-
-
-# done
-- train model with sklearn
-- run model with onnx in python
-- flask server running model
-- docker container with flask server
-- run model with onnx in rust
+- improve error handling
+- reconsider: language-specific project config in root or lang folders?

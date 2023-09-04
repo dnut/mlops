@@ -1,0 +1,12 @@
+[package]
+name = "animal-classification-core"
+version = "0.1.0"
+edition = "2021"
+
+[features]
+default = ["http-typed"]
+
+[dependencies]
+http-typed = { version = "0.4.0", optional = true }
+serde = { version = "1.0.188", features = ["derive"] }
+serde_json = "1.0.105"

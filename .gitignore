@@ -1,5 +1,6 @@
 .env
 *.onnx
+.vscode
 
 # rust
 target

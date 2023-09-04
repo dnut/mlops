@@ -1,0 +1,6 @@
+[workspace]
+members = ["rust/*"]
+resolver = "2"
+
+[workspace.dependencies]
+animal-classification-core = { path = "rust/core" }
