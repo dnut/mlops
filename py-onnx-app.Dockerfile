@@ -1,7 +1,5 @@
 FROM python
 
-RUN mkdir -p /app/input
-
 COPY animal-classes.onnx /app/animal-classes.onnx
 COPY input/class.csv /app/class.csv
 

@@ -1,7 +1,5 @@
 FROM python
 
-RUN mkdir -p /app/input
-
 COPY animal-classes.pkl /app/animal-classes.pkl
 COPY input/class.csv /app/class.csv
 
