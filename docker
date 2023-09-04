@@ -1,17 +1,21 @@
 #!/usr/bin/env bash
-
-run() {
-    docker run -it \
-        -p 5000:5000 \
-        $1
-}
+set -euxo pipefail
 
 build() {
     docker build . -f $1.Dockerfile --tag $1
 }
 
+run() {
+    docker kill $1 || true
+    docker rm $1 || true
+    docker run -it \
+        -p 5000:5000 \
+        --name $1 \
+        $1
+}
+
 bar() {
-    build && run
+    build $@ && run $@
 }
 
 $@

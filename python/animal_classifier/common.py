@@ -1,4 +1,5 @@
 import csv
+import logging
 from abc import ABCMeta, abstractmethod
 from dataclasses import dataclass
 from typing import Dict
@@ -44,6 +45,7 @@ def load_class_id_to_name(class_csv_path: str) -> Dict[int, str]:
 def try_dotenv():
     try:
         from dotenv import load_dotenv
+        logging.info("using .env if available")
         load_dotenv()
     except:
-        print("not using dotenv")
+        logging.info("not using .env")

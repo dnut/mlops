@@ -20,7 +20,10 @@ internal = ["common", "app", "sklearn"]
 
 [_.sklearn]
 internal = ["common"]
-external = { scikit-learn = ">=1.3,<2" }
+
+[_.sklearn.external]
+scikit-learn = ">=1.3,<2"
+pandas = ">=2.1.0,<3"
 
 [_.train.external]
 scikit-learn = ">=1.3,<2"

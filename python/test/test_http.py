@@ -22,4 +22,5 @@ if __name__ == '__main__':
     print("test passed")
 
     # TODO: convert this into something that can run in pytest with a fixture to
-    # start the flask server.
+    # start the flask server. also needs to remain runnable against arbitrary
+    # pre-existing servers, such as a docker container.

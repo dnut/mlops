@@ -7,7 +7,6 @@ COPY input/class.csv /app/class.csv
 
 COPY dist /app/dist
 RUN pip install --find-links /app/dist /app/dist/animal_classifier.onnx_app-0.0.0-py3-none-any.whl
-RUN rm -rf /app/dist
 
 RUN pip install gunicorn
 
