@@ -1,6 +1,3 @@
-from dataclasses import dataclass, asdict
-import requests
-
 from animal_classifier.common import AnimalClass, AnimalDescription
 from animal_classifier.client import AnimalClassifierClient
 
