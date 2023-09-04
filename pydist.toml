@@ -1,0 +1,28 @@
+namespace = "animal_classifier"
+package_dir = "python"
+python_requires = ">=3.11"
+
+[_.app]
+internal = ["common"]
+external = { flask = ">=2.3.3,<3" }
+
+[_.common]
+
+[_.onnx_app]
+internal = ["common", "app", "onnx"]
+
+[_.onnx]
+internal = ["common"]
+external = { onnxruntime = ">=1.15,<2" }
+
+[_.sklearn_app]
+internal = ["common", "app", "sklearn"]
+
+[_.sklearn]
+internal = ["common"]
+external = { scikit-learn = ">=1.3,<2" }
+
+[_.train.external]
+scikit-learn = ">=1.3,<2"
+skl2onnx = ">=1.15,<2"
+pandas = ">=2.1.0,<3"

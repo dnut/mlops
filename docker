@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+
+run() {
+    docker run -it \
+        -p 5000:5000 \
+        $1
+}
+
+build() {
+    docker build . -f $1.Dockerfile --tag $1
+}
+
+bar() {
+    build && run
+}
+
+$@

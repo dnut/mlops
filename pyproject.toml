@@ -1,0 +1,26 @@
+[tool.poetry]
+name = "animal_classifier"
+version = "0.1.0"
+description = "unified package containing all components in the namespace"
+authors = []
+packages = [{ include = "python/animal_classifier/*.py" }]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+flask = "^2.3.3"
+scikit-learn = "^1.3"
+onnxruntime = "^1.15"
+pandas = "^2.1"
+skl2onnx = "^1.15"
+
+[tool.poetry.group.test.dependencies]
+pytest = "*"
+python-dotenv = "*"
+requests = "*"
+
+# build dependencies for dist.py
+build = "*"
+wheel = "*"
+
+[tool.pytest.ini_options]
+pythonpath = ["python"]
